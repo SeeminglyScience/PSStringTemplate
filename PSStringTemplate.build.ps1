@@ -60,7 +60,7 @@ task BuildDebug {
     Copy-Item $script:BuildFolder\*.pdb -Destination $script:ReleaseFolder
 }
 
-task Test -Before Install {
+task Test -Before Install, Publish {
     InvokeWithModuleLoaded { Invoke-Pester }
 }
 
@@ -74,6 +74,18 @@ task Install {
     }
 
     Copy-Item $script:ProjectRoot\Release\* -Destination $installPath -Force -Recurse
+}
+
+task Publish {
+    if ($Configuration -eq 'Debug') {
+        throw 'Configuration must be "Release" to publish!'
+    }
+    if (-not (Test-Path $env:USERPROFILE\.PSGallery\apikey.xml)) {
+        throw 'Could not find PSGallery API key!'
+    }
+    
+    $apiKey = (Import-Clixml $env:USERPROFILE\.PSGallery\apikey.xml).GetNetworkCredential().Password
+    Publish-Module -Name $script:ReleaseFolder -NuGetApiKey $apiKey -WhatIf
 }
 
 task . Build

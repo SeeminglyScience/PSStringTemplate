@@ -66,7 +66,7 @@
             "suppressTaskName": true,
             "showOutput": "always",
             "args": [
-                "Invoke-Build -Task Install"
+                "Invoke-Build -Task Install -Configuration Release"
             ]
         },
         {
@@ -76,6 +76,14 @@
             "showOutput": "always",
             "args": [
                 "Invoke-Build -Task Test"
+            ]
+        },
+        {
+            "taskName": "Publish",
+            "suppressTaskName": true,
+            "showOutput": "always",
+            "args": [
+                "Invoke-Build -Task Publish -Configuration Release"
             ]
         }
     ]
