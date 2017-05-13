@@ -1,0 +1,67 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET (debugHarness.ps1)",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "BuildDebug",
+            "windows": {
+                "program": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+            },
+            "linux": {
+                "program": "/usr/bin/powershell"
+            },
+            "osx": {
+                "program": "/usr/local/bin/powershell"
+            },
+            "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "& '.\\debugHarness.ps1'"],
+            "cwd": "${workspaceRoot}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": ".NET (Invoke-Pester)",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "BuildDebug",
+            "windows": {
+                "program": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+            },
+            "linux": {
+                "program": "/usr/bin/powershell"
+            },
+            "osx": {
+                "program": "/usr/local/bin/powershell"
+            },
+            "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "& { Invoke-Pester }"],
+            "cwd": "${workspaceRoot}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell (debugHarness.ps1)",
+            "script": "${workspaceRoot}/debugHarness.ps1",
+            "args": [],
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell (Invoke-Pester)",
+            "script": "Invoke-Pester",
+            "args": [],
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell (Invoke-Build)",
+            "script": "Invoke-Build",
+            "args": [],
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}

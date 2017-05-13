@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSStringTemplate", "src\PSStringTemplate\PSStringTemplate.csproj", "{7EE9A67A-F825-4977-B13A-7D0B9ADC69A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7F10773E-D370-40DC-8D9C-A9C45C52FE66}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Invoke-StringTemplate.md = docs\Invoke-StringTemplate.md
+		docs\New-StringTemplateGroup.md = docs\New-StringTemplateGroup.md
+		docs\PSStringTemplate.md = docs\PSStringTemplate.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{11A01620-D423-4F3E-842B-42A12F0717C8}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		PSStringTemplate.build.ps1 = PSStringTemplate.build.ps1
+		ThirdPartyNotices.txt = ThirdPartyNotices.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C34D8F8-41F8-4B4D-B727-F78A41C681F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "module", "module", "{956F2E8C-F7D0-4BB2-B80D-F659D80F9811}"
+	ProjectSection(SolutionItems) = preProject
+		module\PSStringTemplate.format.ps1xml = module\PSStringTemplate.format.ps1xml
+		module\PSStringTemplate.psd1 = module\PSStringTemplate.psd1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{BAD1D9D7-C20B-4D49-BC97-2FE94A66F34F}"
+	ProjectSection(SolutionItems) = preProject
+		test\PSStringTemplate.tests.ps1 = test\PSStringTemplate.tests.ps1
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7EE9A67A-F825-4977-B13A-7D0B9ADC69A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE9A67A-F825-4977-B13A-7D0B9ADC69A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE9A67A-F825-4977-B13A-7D0B9ADC69A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE9A67A-F825-4977-B13A-7D0B9ADC69A2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7EE9A67A-F825-4977-B13A-7D0B9ADC69A2} = {6C34D8F8-41F8-4B4D-B727-F78A41C681F9}
+	EndGlobalSection
+EndGlobal
