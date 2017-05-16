@@ -61,6 +61,15 @@ namespace PSStringTemplate.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to compile template. Engine message: {0}.
+        /// </summary>
+        internal static string CompiletimeExceptionWrapper {
+            get {
+                return ResourceManager.GetString("CompiletimeExceptionWrapper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Missing argument &apos;{0}&apos; in template &apos;{1}&apos;, skipping..
         /// </summary>
         internal static string DebugArgumentNotFound {
@@ -106,7 +115,7 @@ namespace PSStringTemplate.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A exception occurred while processing template &quot;{0}&quot;: {1}.
+        ///   Looks up a localized string similar to An exception occurred while processing template &quot;{0}&quot;.  Engine message: {1}.
         /// </summary>
         internal static string RuntimeExceptionWrapper {
             get {
@@ -124,7 +133,7 @@ namespace PSStringTemplate.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unhandled exception from StringTemplate, please file an issue on GitHub. (msg: {0}).
+        ///   Looks up a localized string similar to Unhandled exception from StringTemplate, please file an issue on GitHub. Engine message: {0}.
         /// </summary>
         internal static string UnhandledErrorMessage {
             get {

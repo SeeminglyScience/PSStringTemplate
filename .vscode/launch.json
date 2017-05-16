@@ -62,6 +62,14 @@
             "script": "Invoke-Build",
             "args": [],
             "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Launch Current File",
+            "script": "${file}",
+            "args": [],
+            "cwd": "${file}"
         }
     ]
 }

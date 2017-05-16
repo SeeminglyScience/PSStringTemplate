@@ -5,9 +5,7 @@ using System.Management.Automation.Language;
 using System.Globalization;
 using Antlr4.StringTemplate;
 using Antlr4.StringTemplate.Misc;
-using Antlr.Runtime;
 
-using Token = Antlr4.StringTemplate.Compiler.TemplateLexer.TemplateToken;
 using Strings = PSStringTemplate.Properties.Resources;
 
 namespace PSStringTemplate
@@ -35,6 +33,7 @@ namespace PSStringTemplate
         /// Handles errors at template compile time, typically related to parsing issues.
         /// </summary>
         /// <param name="msg">The message from Antlr.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public void CompiletimeError(TemplateMessage msg)
         {
             if (msg == null)
@@ -42,32 +41,13 @@ namespace PSStringTemplate
                 ThrowUnhandledError("CompiletimeError", null);
                 return;
             }
+            var helper = new MessageHelper(msg);
+            
+            var errorDescription = string.Format(CultureInfo.CurrentCulture,
+                Strings.CompiletimeExceptionWrapper,
+                helper.ErrorDescription);
 
-            var message = msg as TemplateCompiletimeMessage;
-
-            var token = message?.Token as Token;
-
-            ScriptExtent extent;
-            if (token == null)
-            {
-                var emptyPosition = new ScriptPosition(string.Empty, 0, 0, string.Empty);
-                extent = new ScriptExtent(emptyPosition, emptyPosition);
-            }
-            else
-            {
-                var chars = token.InputStream as ANTLRStringStream;
-                var line = chars?.Substring(0, chars.Count);
-
-                var start = new ScriptPosition(string.Empty,
-                    token.Line,
-                    token.CharPositionInLine + 1,
-                    line);
-
-                extent = new ScriptExtent(start, start);
-            }
-
-            var errors = new ParseError[1];
-            errors[0] = new ParseError(extent, "CompiletimeError", message?.Arg as string);
+            var errors = new[] {new ParseError(helper.ErrorExtent, "CompiletimeError", errorDescription)};
 
             ErrorContext.ThrowTerminatingError(new ErrorRecord(
                 new ParseException(errors),
@@ -75,6 +55,8 @@ namespace PSStringTemplate
                 ErrorCategory.ParserError,
                 msg.Self));
         }
+
+        
 
         public void InternalError(TemplateMessage msg)
         {
@@ -90,6 +72,7 @@ namespace PSStringTemplate
         /// Handles errors thrown while a template is rendering.
         /// </summary>
         /// <param name="msg">The message from Antlr.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public void RuntimeError(TemplateMessage msg)
         {
             if (msg == null)
@@ -115,10 +98,8 @@ namespace PSStringTemplate
                     msg.Arg as string, msg.Self.Name));
                 return;
             }
-
-            var antlrMessage = msg.ToString();
             var fullMessage = string.Format(CultureInfo.CurrentCulture,
-                                            Strings.RuntimeExceptionWrapper, msg.Self.Name, antlrMessage);
+                                            Strings.RuntimeExceptionWrapper, msg.Self.Name, msg.ToString());
             ErrorContext.ThrowTerminatingError(new ErrorRecord(
                 new RuntimeException(fullMessage),
                 "RuntimeError",
