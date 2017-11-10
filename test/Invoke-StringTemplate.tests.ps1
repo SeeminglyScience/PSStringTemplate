@@ -56,4 +56,27 @@ System.IO.DirectoryInfo - EnumerateFileSystemInfos - Method
         $cmdlet = New-Object PSStringTemplate.NewStringTemplateGroupCommand -Property @{ Definition = 'Test' }
         Invoke-StringTemplate -Definition '<_Definition>' $cmdlet | Should BeNullOrEmpty
     }
+    It 'can map static properties when input is a type' {
+        [DateTime] |
+            Invoke-StringTemplate -Definition '<Now>' |
+            Should Not BeNullOrEmpty
+    }
+    It 'adds instance properties of RuntimeType as well when bound by input' {
+        [DateTime] |
+            Invoke-StringTemplate -Definition '<IsPublic>' |
+            Should Be True
+    }
+    It 'can map static properties using the type adapter' {
+        Invoke-StringTemplate -Definition '<r.DefaultRunspace.RunspaceStateInfo.State>' @{
+            r = [runspace]
+        } | Should Be 'Opened'
+    }
+    It 'adds instance properties as well as static using the adapter' {
+        Invoke-StringTemplate -Definition '<r.IsPublic>' @{ r = [runspace] } |
+            Should Be True
+    }
+    It 'can format date using the date renderer' {
+        Invoke-StringTemplate -Definition '<d; format="yyyy.MM.dd">' @{ d = [DateTime]'1/1/90' } |
+            Should Be '1990.01.01'
+    }
 }
