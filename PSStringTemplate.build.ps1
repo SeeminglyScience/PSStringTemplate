@@ -2,14 +2,14 @@
 [CmdletBinding()]
 param([string]$Configuration = 'Debug')
 
-$script:ProjectRoot   = $PSScriptRoot
-$script:ProjectName   = $script:ProjectRoot | Split-Path -Leaf
-$script:Manifest      = Test-ModuleManifest -Path $script:ProjectRoot\module\$script:ProjectName.psd1 -ErrorAction 0 -WarningAction 0
-$script:Version       = $script:Manifest.Version
-$script:ReleaseFolder = "$script:ProjectRoot\Release\$script:ProjectName\$script:Version"
-$script:ManifestPath  = "$script:ReleaseFolder\$script:ProjectName.psd1"
-$script:BuildFolder   = "$script:ProjectRoot\src\$script:ProjectName\bin\$Configuration"
-$script:Locale        = $PSCulture
+$ProjectRoot   = $PSScriptRoot
+$ProjectName   = $ProjectRoot | Split-Path -Leaf
+$Manifest      = Test-ModuleManifest -Path $ProjectRoot\module\$ProjectName.psd1 -ErrorAction 0 -WarningAction 0
+$Version       = $Manifest.Version
+$ReleaseFolder = "$ProjectRoot\Release\$ProjectName\$Version"
+$ManifestPath  = "$ReleaseFolder\$ProjectName.psd1"
+$BuildFolder   = "$ProjectRoot\src\$ProjectName\bin\$Configuration"
+$Locale        = $PSCulture
 
 # Load the module and invoke a script block in a different process so we don't have to restart
 # the integrated console to rebuild dll's.
@@ -23,8 +23,8 @@ function InvokeWithModuleLoaded {
         $ScriptBlock
     )
     $script = [scriptblock]::Create([System.Text.StringBuilder]::new().
-            AppendFormat('Set-Location ''{0}''', $script:ProjectRoot).AppendLine().
-            AppendFormat('Import-Module {0}', $script:ManifestPath).AppendLine().
+            AppendFormat('Set-Location ''{0}''', $ProjectRoot).AppendLine().
+            AppendFormat('Import-Module {0}', $ManifestPath).AppendLine().
             AppendLine($ScriptBlock).
             ToString())
 
@@ -35,10 +35,10 @@ function InvokeWithModuleLoaded {
 
 task Clean -Before BuildDll {
     exec { & dotnet clean }
-    if (Test-Path $script:ProjectRoot\Release) {
-        Remove-Item $script:ProjectRoot\Release -Recurse
+    if (Test-Path $ProjectRoot\Release) {
+        Remove-Item $ProjectRoot\Release -Recurse
     }
-    $null = New-Item $script:ReleaseFolder -ItemType Directory
+    $null = New-Item $ReleaseFolder -ItemType Directory
 }
 
 task BuildDll -Before BuildDocs {
@@ -46,18 +46,16 @@ task BuildDll -Before BuildDocs {
 }
 
 task BuildDocs -Before Build {
-        $null = New-ExternalHelp -Path        $script:ProjectRoot\docs `
-                                 -OutputPath "$script:ReleaseFolder\$script:Locale"
+    $null = New-ExternalHelp -Path $ProjectRoot\docs -OutputPath "$ReleaseFolder\$Locale"
 }
 
 task Build -Before Test, BuildDebug {
-    Copy-Item $script:BuildFolder\*.dll -Destination $script:ReleaseFolder
-
-    Copy-Item $script:ProjectRoot\module\* -Destination $script:ReleaseFolder
+    Copy-Item $BuildFolder\*.dll -Destination $ReleaseFolder
+    Copy-Item $ProjectRoot\module\* -Destination $ReleaseFolder
 }
 
 task BuildDebug {
-    Copy-Item $script:BuildFolder\*.pdb -Destination $script:ReleaseFolder
+    Copy-Item $BuildFolder\*.pdb -Destination $ReleaseFolder
 }
 
 task Test -Before Install, Publish {
@@ -73,19 +71,21 @@ task Install {
         $null = New-Item $installPath -ItemType Directory
     }
 
-    Copy-Item $script:ProjectRoot\Release\* -Destination $installPath -Force -Recurse
+    Copy-Item $ProjectRoot\Release\* -Destination $installPath -Force -Recurse
 }
 
 task Publish {
     if ($Configuration -eq 'Debug') {
         throw 'Configuration must be "Release" to publish!'
     }
+
     if (-not (Test-Path $env:USERPROFILE\.PSGallery\apikey.xml)) {
+
         throw 'Could not find PSGallery API key!'
     }
     
     $apiKey = (Import-Clixml $env:USERPROFILE\.PSGallery\apikey.xml).GetNetworkCredential().Password
-    Publish-Module -Name $script:ReleaseFolder -NuGetApiKey $apiKey -WhatIf
+    Publish-Module -Name $ReleaseFolder -NuGetApiKey $apiKey -Confirm
 }
 
 task . Build
