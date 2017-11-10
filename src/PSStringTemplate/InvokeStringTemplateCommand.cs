@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 using Strings = PSStringTemplate.Properties.Resources;
@@ -133,6 +134,11 @@ namespace PSStringTemplate
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "The exception itself doesn't matter here, only that it's not accessible as a property.")]
         private void ProcessObjectAsArguments()
         {
+            if (Parameters.BaseObject is Type type)
+            {
+                ProcessStaticProperties(type);
+            }
+
             // Add any property with value as an argument.
             var propertyNames = new List<string>();
             foreach (var property in Parameters.Properties)
@@ -182,6 +188,20 @@ namespace PSStringTemplate
                 AddTemplateArgument(nameAsProperty, result);
             }
         }
+
+        private void ProcessStaticProperties(Type type)
+        {
+            Array.ForEach(
+                type.GetProperties(BindingFlags.Static | BindingFlags.Public),
+                property =>
+                {
+                    AddTemplateArgument(
+                        property.Name,
+                        AdapterUtil.NullIfEmpty(
+                            property.GetValue(null)));
+                });
+        }
+
         /// <summary>
         /// Adds an argument to a template with extra exception handling.
         /// </summary>
