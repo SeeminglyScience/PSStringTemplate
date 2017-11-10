@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Management.Automation;
 using Antlr4.StringTemplate;
 using Antlr4.StringTemplate.Misc;
@@ -13,32 +14,33 @@ namespace PSStringTemplate
                                            object property,
                                            string propertyName)
         {
-            if (obj is PSObject psObject)
+            var psObject = obj as PSObject;
+            if (psObject == null)
             {
-                var result = psObject.Properties.FirstOrDefault(p => p.Name == propertyName);
-
-                if (result != null) return ProcessValue(result.Value);
-
-                var method = psObject.Methods.FirstOrDefault(
-                    m => m.Name == string.Concat("Get", propertyName) &&
-                         m.OverloadDefinitions.FirstOrDefault().Contains(@"()") &&
-                        !m.OverloadDefinitions.FirstOrDefault().Contains("void"));
-                
-                return method != null
-                    ? ProcessValue(method?.Invoke())
-                    : null;
+                return base.GetProperty(interpreter, frame, obj, property, propertyName);
             }
 
-            return base.GetProperty(interpreter, frame, obj, property, propertyName);
-        }
-        private static object ProcessValue(object value)
-        {
-            // Enable treating null-like values like empty strings and arrays from PSObject as null.
-            return value == null
-                ? null
-                : LanguagePrimitives.IsTrue(value)
-                    ? value
-                    : null;
+            // Check for static property matches if we're processing a type,
+            // continue to instance properties if binding fails.
+            if (psObject.BaseObject is Type type)
+            {
+                var typeResult = TypeAdapter.GetProperty(type, propertyName);
+                if (typeResult != null)
+                {
+                    return typeResult;
+                }
+            }
+
+            var result = psObject.Properties.FirstOrDefault(p => p.Name == propertyName);
+
+            if (result != null) return AdapterUtil.NullIfEmpty(result.Value);
+
+            var method = psObject.Methods.FirstOrDefault(
+                m => m.Name == string.Concat("Get", propertyName) &&
+                        m.OverloadDefinitions.FirstOrDefault().Contains(@"()") &&
+                    !m.OverloadDefinitions.FirstOrDefault().Contains("void"));
+            
+            return AdapterUtil.NullIfEmpty(method?.Invoke());
         }
     }
 }

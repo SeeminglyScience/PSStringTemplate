@@ -63,6 +63,8 @@
   <ItemGroup>
     <Compile Include="MessageHelper.cs" />
     <Compile Include="PSObjectAdaptor.cs" />
+    <Compile Include="TypeAdapter.cs" />
+    <Compile Include="AdapterUtil.cs" />
     <Compile Include="TemplateGroupInfo.cs" />
     <Compile Include="ErrorListener.cs" />
     <Compile Include="GlobalSuppressions.cs" />
