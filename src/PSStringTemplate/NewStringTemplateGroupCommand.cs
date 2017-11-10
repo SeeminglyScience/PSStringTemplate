@@ -1,4 +1,4 @@
-﻿using System.Management.Automation;
+using System.Management.Automation;
 using Antlr4.StringTemplate;
 using Antlr4.StringTemplate.Misc;
 
@@ -30,6 +30,8 @@ namespace PSStringTemplate
             var groupInfo = new TemplateGroupInfo(group);
 
             group.RegisterModelAdaptor(typeof(PSObject), new PSObjectAdaptor());
+            group.RegisterRenderer(typeof(DateTime), new DateRenderer());
+            group.RegisterRenderer(typeof(DateTimeOffset), new DateRenderer());
             group.Listener = ErrorManager.DefaultErrorListener;
 
             WriteObject(groupInfo);
