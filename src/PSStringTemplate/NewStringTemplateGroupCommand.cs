@@ -14,8 +14,7 @@ namespace PSStringTemplate
     public class NewStringTemplateGroupCommand : Cmdlet
     {
         /// <summary>
-        /// The following is the definition of the input parameter "Definition".
-        /// Specifies a string to use to create a template group.
+        /// Gets or sets the string template group definition.
         /// </summary>
         [Parameter(Mandatory = true)]
         [ValidateNotNullOrEmpty]

@@ -25,19 +25,17 @@ namespace PSStringTemplate
         private TemplateInfo _currentTemplate;
 
         /// <summary>
-        /// The following is the definition of the input parameter "Definition".
-        /// Specifies the string to use to create a temporary template to render.
+        /// Gets or sets the string template definition to invoke.
         /// </summary>
-        [Parameter(Mandatory = true,
-            ParameterSetName = "ByDefinition")]
+        [Parameter(Mandatory = true, ParameterSetName = "ByDefinition")]
         [ValidateNotNullOrEmpty]
         public string Definition { get; set; }
 
         /// <summary>
-        /// The following is the definition of the input parameter "Group".
-        /// Specifies the existing group object search within for a template to render.
+        /// Gets or sets the target template group.
         /// </summary>
-        [Parameter(Mandatory = true,
+        [Parameter(
+            Mandatory = true,
             Position = 0,
             ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true,
@@ -46,31 +44,24 @@ namespace PSStringTemplate
         public TemplateGroupInfo Group { get; set; }
 
         /// <summary>
-        /// The following is the definition of the input parameter "Name".
-        /// Specifies the name of the template within the group specified in the "Group"
-        /// parameter to render.
+        /// Gets or sets the name of the template to invoke.
         /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "ByGroup")]
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "ByGroup")]
         [ValidateNotNullOrEmpty]
         public string Name { get; set; }
 
         /// <summary>
-        /// The following is the definition of the input parameter "Parameters".
-        /// Specifies a <see cref="IDictionary"/> or other <see cref="PSObject"/> to use as parameters for the template.
+        /// Gets or sets the template parameters.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSObject Parameters { get; set; }
-
 
         /// <summary>
         /// ProcessRecord method.
         /// </summary>
         protected override void ProcessRecord()
         {
-
             TemplateGroupInfo group = null;
             if (Group != null)
             {
@@ -89,13 +80,16 @@ namespace PSStringTemplate
 
                     var msg = string.Format(
                         CultureInfo.CurrentCulture,
-                        Strings.TemplateNotFound, name, nameString);
+                        Strings.TemplateNotFound,
+                        name,
+                        nameString);
 
                     var error = new ErrorRecord(
                         new InvalidOperationException(msg),
                         nameof(Strings.TemplateNotFound),
                         ErrorCategory.ObjectNotFound,
                         name);
+
                     ThrowTerminatingError(error);
                 }
 
@@ -113,20 +107,29 @@ namespace PSStringTemplate
             if (Parameters != null)
             {
                 if (Parameters.BaseObject is IDictionary asDictionary)
+                {
                     foreach (DictionaryEntry keyValuePair in asDictionary)
+                    {
                         AddTemplateArgument(keyValuePair.Key as string, keyValuePair.Value);
+                    }
+                }
                 else
+                {
                     ProcessObjectAsArguments();
+                }
             }
 
             var result = _currentTemplate.Instance.Render(CultureInfo.CurrentCulture);
             if (result != null)
+            {
                 WriteObject(result);
+            }
 
             _currentTemplate.ResetInstance();
-            
+
             group.Unbind();
         }
+
         /// <summary>
         /// Get the properties of the object in the "Parameter" input parameter and add them as
         /// template arguments.
@@ -153,6 +156,7 @@ namespace PSStringTemplate
                 {
                     continue;
                 }
+
                 AddTemplateArgument(property.Name, property.Value);
                 propertyNames.Add(property.Name);
             }
@@ -180,11 +184,15 @@ namespace PSStringTemplate
                 }
                 catch
                 {
-                    WriteDebug(string.Format(CultureInfo.CurrentCulture,
-                        Strings.DebugInvokePropertyLikeMethodException,
-                        method.Name, nameAsProperty));
+                    WriteDebug(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.DebugInvokePropertyLikeMethodException,
+                            method.Name,
+                            nameAsProperty));
                     continue;
                 }
+
                 AddTemplateArgument(nameAsProperty, result);
             }
         }
@@ -212,17 +220,29 @@ namespace PSStringTemplate
             try
             {
                 _currentTemplate.Instance.Add(name, value);
-                WriteVerbose(string.Format(CultureInfo.CurrentCulture,
-                    Strings.VerboseAddedParameter,
-                    name, _currentTemplate.Name));
+                WriteVerbose(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.VerboseAddedParameter,
+                        name,
+                        _currentTemplate.Name));
             }
             catch (ArgumentException exception)
             {
-                if (exception.Message.StartsWith(@"no such attribute: ", StringComparison.CurrentCulture))
-                    WriteDebug(string.Format(CultureInfo.CurrentCulture,
-                        Strings.DebugAttributeNotFound,
-                        name, _currentTemplate.Name));
-                else throw;
+                if (exception.Message.StartsWith(
+                    @"no such attribute: ",
+                    StringComparison.CurrentCulture))
+                {
+                    WriteDebug(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.DebugAttributeNotFound,
+                            name,
+                            _currentTemplate.Name));
+                    return;
+                }
+
+                throw;
             }
         }
     }
