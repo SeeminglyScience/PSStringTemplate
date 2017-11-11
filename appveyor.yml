@@ -31,7 +31,7 @@ build_script:
         exit 1;
     }
 on_finish:
--ps: >-
+- ps: >-
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $zipPath = "$pwd\PSStringTemplate.zip"
     [System.IO.Compression.ZipFile]::CreateFromDirectory("$pwd\Release", $zipPath)
