@@ -1,7 +1,9 @@
 ﻿using Antlr4.StringTemplate;
+using Antlr4.StringTemplate.Misc;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
-using Antlr4.StringTemplate.Misc;
+using System;
+
 using Strings = PSStringTemplate.Properties.Resources;
 
 namespace PSStringTemplate
@@ -66,6 +68,9 @@ namespace PSStringTemplate
         {
             group.Listener = new ErrorListener(context);
             group.RegisterModelAdaptor(typeof(PSObject), new PSObjectAdaptor());
+            group.RegisterModelAdaptor(typeof(Type), new TypeAdapter());
+            group.RegisterRenderer(typeof(DateTime), new DateRenderer());
+            group.RegisterRenderer(typeof(DateTimeOffset), new DateRenderer());
         }
 
         internal void Unbind()
