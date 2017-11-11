@@ -10,7 +10,7 @@ By participating, you are expected to uphold this code. Please report unacceptab
 
 |AppVeyor (Windows)|CircleCI (Linux)|CodeCov|
 |---|---|---|
-|[![Build status](https://ci.appveyor.com/api/projects/status/3uvr9oq297uhvj8p?svg=true)](https://ci.appveyor.com/project/SeeminglyScience/psstringtemplate)|[[![CircleCI](https://circleci.com/gh/SeeminglyScience/PSStringTemplate.svg?style=svg)](https://circleci.com/gh/SeeminglyScience/PSStringTemplate)|[![codecov](https://codecov.io/gh/SeeminglyScience/PSStringTemplate/branch/master/graph/badge.svg)](https://codecov.io/gh/SeeminglyScience/PSStringTemplate)|
+|[![Build status](https://ci.appveyor.com/api/projects/status/3uvr9oq297uhvj8p?svg=true)](https://ci.appveyor.com/project/SeeminglyScience/psstringtemplate)|[![CircleCI](https://circleci.com/gh/SeeminglyScience/PSStringTemplate.svg?style=svg)](https://circleci.com/gh/SeeminglyScience/PSStringTemplate)|[![codecov](https://codecov.io/gh/SeeminglyScience/PSStringTemplate/branch/master/graph/badge.svg)](https://codecov.io/gh/SeeminglyScience/PSStringTemplate)|
 
 ## Documentation
 
