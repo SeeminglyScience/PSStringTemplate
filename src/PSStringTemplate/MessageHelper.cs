@@ -62,8 +62,7 @@ namespace PSStringTemplate
             var start = new ScriptPosition(string.Empty,
                 _cause?.Line ?? 0,
                 startOffsetInLine + 1,
-                line,
-                fullText);
+                line);
 
             return new ScriptExtent(start, start);
         }

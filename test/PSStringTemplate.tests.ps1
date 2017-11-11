@@ -7,7 +7,7 @@
         $manifest = $script:manifest
         $manifest.Name              | Should Be 'PSStringTemplate'
         $manifest.Guid              | Should Be 'f188d0cf-291f-41a1-ae0e-c770d980cf6e'
-        $manifest.RootModule        | Should Be '.\PSStringTemplate.dll'
+        $manifest.RootModule        | Should Be '.\PSStringTemplate.psm1'
         $manifest.PowerShellVersion | Should Be '3.0'
         $manifest.DotNetFrameworkVersion | Should Be '4.5'
     }
