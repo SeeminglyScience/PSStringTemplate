@@ -1,7 +1,8 @@
 ﻿Describe 'Manifest Validation' {
     $script:manifestPath = Resolve-Path "$PSScriptRoot\..\Release\PSStringTemplate\*\PSStringTemplate.psd1"
     It 'Passes Test-ModuleManifest' {
-        $script:manifest = Test-ModuleManifest -Path $script:manifestPath -WarningAction 0
+        # Ignore errors because FileList will be different if built in non-Windows platforms.
+        $script:manifest = Test-ModuleManifest -Path $script:manifestPath -WarningAction 0 -ea 0
     }
     It 'Has the correct properties' {
         $manifest = $script:manifest
@@ -27,12 +28,13 @@ Describe 'Readme examples work as is' {
     It 'Anonymous template with object as parameters' {
         $definition = 'Name: <Name><\n>Commands: <ExportedCommands; separator=", ">'
 
-        # Need to pick a different module as a example, one that is default with 3.0
-        $result = Invoke-StringTemplate -Definition $definition -Parameters (Get-Module -ListAvailable PSReadLine)[0]
+        $module = Get-Module -ListAvailable Microsoft.PowerShell.Host
+        $result = Invoke-StringTemplate -Definition $definition -Parameters $module
 
         # Can't directly compare because the commands come out in a different order.
-        $result.StartsWith('Name: PSReadline') | Should -Be $true
-        (Get-Module -ListAvailable PSReadline)[0].ExportedCommands | ForEach-Object { $result -match $_.ToString() }
+        $result.StartsWith('Name: Microsoft.PowerShell.Host') | Should -Be $true
+        $module[0].ExportedCommands |
+            ForEach-Object { $result -match $_.ToString() }
     }
     # TODO: Fix this test so it can work in environments where the members may vary.
     It 'TemplateGroup definition' -Skip {

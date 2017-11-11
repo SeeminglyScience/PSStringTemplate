@@ -26,7 +26,9 @@ template1() ::= <<
     This is the first line
     This is the second
 >>'
-        $result | Invoke-StringTemplate | Should -Be "    This is the first line`r`n    this is the second"
+        $result | Invoke-StringTemplate | Should -Be (
+            '    This is the first line',
+            '    This is the second' -join [Environment]::NewLine)
     }
 }
 Describe 'Group exception handling tests' {
