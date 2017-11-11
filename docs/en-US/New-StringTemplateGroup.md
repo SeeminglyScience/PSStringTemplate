@@ -1,6 +1,6 @@
 ---
 external help file: PSStringTemplate.dll-Help.xml
-online version: 
+online version: https://github.com/SeeminglyScience/PSStringTemplate/blob/master/docs/en-US/New-StringTemplateGroup.md
 schema: 2.0.0
 ---
 
