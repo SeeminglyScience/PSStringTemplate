@@ -1,6 +1,6 @@
 ---
 external help file: PSStringTemplate.dll-Help.xml
-online version: 
+online version: https://github.com/SeeminglyScience/PSStringTemplate/blob/master/docs/en-US/Invoke-StringTemplate.md
 schema: 2.0.0
 ---
 
@@ -120,7 +120,7 @@ Specifies a Template definition string to create a new Template to be rendered.
 ```yaml
 Type: String
 Parameter Sets: ByDefinition
-Aliases: 
+Aliases:
 
 Required: True
 Position: Named
@@ -136,7 +136,7 @@ Specifies an existing TemplateGroup to retrieve a template from.
 ```yaml
 Type: TemplateGroupInfo
 Parameter Sets: ByGroup
-Aliases: 
+Aliases:
 
 Required: True
 Position: 0

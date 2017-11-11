@@ -1,7 +1,7 @@
 ---
 Module Name: PSStringTemplate
 Module Guid: f188d0cf-291f-41a1-ae0e-c770d980cf6e
-Download Help Link: {{Please enter FwLink manually}}
+Download Help Link:
 Help Version: 1.0.0.5
 Locale: en-US
 ---
