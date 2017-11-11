@@ -6,13 +6,17 @@ param(
 )
 end {
     $TARGET_FOLDER = "$PSScriptRoot/dotnet"
+    $TARGET_COMMAND = 'dotnet.exe'
+    if ($Unix.IsPresent) {
+        $TARGET_COMMAND = 'dotnet'
+    }
 
     if (($dotnet = Get-Command dotnet -ea 0) -and (& $dotnet --version) -eq $Version) {
         return $dotnet
     }
 
 
-    if ($dotnet = Get-Command $TARGET_FOLDER/dotnet.exe -ea 0) {
+    if ($dotnet = Get-Command $TARGET_FOLDER/$TARGET_COMMAND -ea 0) {
         if (($found = & $dotnet --version) -eq $Version) {
             return $dotnet
         }
@@ -29,7 +33,6 @@ end {
         $scriptText = [System.Net.WebClient]::new().DownloadString($uri)
         Set-Content $installerPath -Value $scriptText -Encoding UTF8
         $installer = { param($Version, $InstallDir) & (Get-Command bash) $installerPath -Version $Version -InstallDir $InstallDir }
-        $executableName = 'dotnet'
     } else {
         $uri = "https://raw.githubusercontent.com/dotnet/cli/v2.0.0/scripts/obtain/dotnet-install.ps1"
         $scriptText = [System.Net.WebClient]::new().DownloadString($uri)
@@ -37,10 +40,9 @@ end {
         # Stop the official script from hard exiting at times...
         $safeScriptText = $scriptText -replace 'exit 0', 'return'
         $installer = [scriptblock]::Create($safeScriptText)
-        $executableName = 'dotnet.exe'
     }
 
     $null = & $installer -Version $Version -InstallDir $TARGET_FOLDER
 
-    return Get-Command $TARGET_FOLDER/$executableName
+    return Get-Command $TARGET_FOLDER/$TARGET_COMMAND
 }

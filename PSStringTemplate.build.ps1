@@ -95,7 +95,7 @@ task CopyToRelease  {
 
     $null = New-Item $releaseCoreBin -Force -ItemType Directory
     Copy-Item -Path $sourceCoreBin\PSStringTemplate* -Destination $releaseCoreBin -Force
-    Copy-Item -Path $sourceDesktopBin\Antlr* -Destination $releaseCoreBin -Force
+    Copy-Item -Path $sourceCoreBin\Antlr* -Destination $releaseCoreBin -Force
 }
 
 task DoTest -If { $Discovery.HasTests -and $Settings.ShouldTest } {
