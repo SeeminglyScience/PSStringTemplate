@@ -33,6 +33,9 @@ build_script:
 on_finish:
 - ps: >-
     Add-Type -AssemblyName System.IO.Compression.FileSystem
+
     $zipPath = "$pwd\PSStringTemplate.zip"
+
     [System.IO.Compression.ZipFile]::CreateFromDirectory("$pwd\Release", $zipPath)
+
     Push-AppveyorArtifact $zipPath

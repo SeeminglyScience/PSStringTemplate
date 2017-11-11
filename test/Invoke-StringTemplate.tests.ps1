@@ -17,11 +17,11 @@ Describe 'Template invocation tests' {
             Get-Member -MemberType Method |
             Where-Object Name -Match '^Enumerate' |
             Invoke-StringTemplate -Definition '<TypeName> - <Name> - <MemberType>'
-        $result -join [Environment]::NewLine | Should -Be @'
-System.IO.DirectoryInfo - EnumerateDirectories - Method
-System.IO.DirectoryInfo - EnumerateFiles - Method
-System.IO.DirectoryInfo - EnumerateFileSystemInfos - Method
-'@
+        $result -join [Environment]::NewLine | Should -Be (
+            'System.IO.DirectoryInfo - EnumerateDirectories - Method',
+            'System.IO.DirectoryInfo - EnumerateFiles - Method',
+            'System.IO.DirectoryInfo - EnumerateFileSystemInfos - Method' -join
+            [Environment]::NewLine)
     }
     It 'can invoke multiple templates from the pipeline' {
         $group = New-StringTemplateGroup -Definition '
