@@ -1,7 +1,7 @@
-﻿using System.Reflection;
-using System.Runtime.InteropServices;
+﻿using System;
+using System.Reflection;
 using System.Resources;
-using System;
+using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -27,6 +27,5 @@ using System;
 //
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
-
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: CLSCompliant(false)]

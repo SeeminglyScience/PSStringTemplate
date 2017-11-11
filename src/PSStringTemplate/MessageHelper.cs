@@ -1,7 +1,7 @@
-﻿using System.Management.Automation.Language;
+﻿using System.Linq;
+using System.Management.Automation.Language;
 using Antlr.Runtime;
 using Antlr4.StringTemplate.Misc;
-using System.Linq;
 
 namespace PSStringTemplate
 {
@@ -11,37 +11,43 @@ namespace PSStringTemplate
     /// </summary>
     internal class MessageHelper
     {
-        /// <summary>
-        /// A summary of the error from the <see cref="TemplateMessage"/>.
-        /// </summary>
-        internal string ErrorDescription { get; }
-        /// <summary>
-        /// The approximate location of the invalid syntax.
-        /// </summary>
-        internal ScriptExtent ErrorExtent { get; }
-
         private readonly TemplateMessage _message;
         private readonly CommonToken _token;
         private readonly RecognitionException _cause;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageHelper"/> class.
+        /// </summary>
+        /// <param name="msg">The message passed by Antlr.</param>
         internal MessageHelper(TemplateMessage msg)
         {
             _message = msg;
             _token = GetToken();
+
             // TODO: Get the type of exception before casting and include that in the error.
             _cause = msg.Cause as RecognitionException;
 
             // TODO: Include the "Expecting" property that is sometimes included in the exception.
             ErrorDescription = GetDescription();
             ErrorExtent = GetScriptExtent();
-
         }
+
+        /// <summary>
+        /// Gets the summary of the error from the <see cref="TemplateMessage"/>.
+        /// </summary>
+        internal string ErrorDescription { get; }
+
+        /// <summary>
+        /// Gets the approximate location of the invalid syntax.
+        /// </summary>
+        internal ScriptExtent ErrorExtent { get; }
 
         private ScriptExtent GetScriptExtent()
         {
-            var startOffsetInLine = _cause?.CharPositionInLine
-                                    ?? _token?.CharPositionInLine
-                                    ?? 0;
+            var startOffsetInLine =
+                _cause?.CharPositionInLine
+                    ?? _token?.CharPositionInLine
+                    ?? 0;
 
             // Prefer the input stream from cause if possible, the token is more likely to
             // only be a portion of the source, which causes the extent to be off.
@@ -58,8 +64,8 @@ namespace PSStringTemplate
                 ? lines[lineNumber]
                 : string.Empty;
 
-
-            var start = new ScriptPosition(string.Empty,
+            var start = new ScriptPosition(
+                string.Empty,
                 _cause?.Line ?? 0,
                 startOffsetInLine + 1,
                 line);
@@ -79,9 +85,10 @@ namespace PSStringTemplate
         {
             // Lexer again likes to break the mold.  May remove the check for a token in cause, haven't
             // seen it used yet.
-            var result = (_message as TemplateCompiletimeMessage)?.Token
-                         ?? (_message as TemplateLexerMessage)?.TemplateToken
-                         ?? (_message.Cause as RecognitionException)?.Token;
+            var result =
+                (_message as TemplateCompiletimeMessage)?.Token
+                    ?? (_message as TemplateLexerMessage)?.TemplateToken
+                    ?? (_message.Cause as RecognitionException)?.Token;
             return result as CommonToken;
         }
     }

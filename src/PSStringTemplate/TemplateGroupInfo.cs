@@ -1,8 +1,8 @@
-﻿using Antlr4.StringTemplate;
-using Antlr4.StringTemplate.Misc;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
-using System;
+using Antlr4.StringTemplate;
+using Antlr4.StringTemplate.Misc;
 
 using Strings = PSStringTemplate.Properties.Resources;
 
@@ -14,16 +14,9 @@ namespace PSStringTemplate
     public class TemplateGroupInfo
     {
         /// <summary>
-        /// The base <see cref="TemplateGroup"/> that this object wraps.
+        /// Initializes a new instance of the <see cref="TemplateGroupInfo"/> class.
         /// </summary>
-        internal TemplateGroup Instance { get; }
-
-        /// <summary>
-        /// The <see cref="Template"/> objects that belong to this group, wrapped in
-        /// <see cref="TemplateInfo"/> objects.
-        /// </summary>
-        public ReadOnlyCollection<TemplateInfo> Templates { get; }
-
+        /// <param name="templateGroupInstance">The internal group instance.</param>
         internal TemplateGroupInfo(TemplateGroup templateGroupInstance)
         {
             Instance = templateGroupInstance;
@@ -33,17 +26,30 @@ namespace PSStringTemplate
             {
                 templates.Add(new TemplateInfo(Instance.GetInstanceOf(name), this));
             }
+
             Templates = new ReadOnlyCollection<TemplateInfo>(templates);
         }
+
+        /// <summary>
+        /// Gets the <see cref="Template"/> objects that belong to this group, wrapped in
+        /// <see cref="TemplateInfo"/> objects.
+        /// </summary>
+        public ReadOnlyCollection<TemplateInfo> Templates { get; }
+
+        /// <summary>
+        /// Gets the base <see cref="TemplateGroup"/> that this object wraps.
+        /// </summary>
+        internal TemplateGroup Instance { get; }
 
         /// <summary>
         /// Create a <see cref="TemplateGroupString"/> from a template definition string.
         /// </summary>
         /// <param name="context">The error listener attached to the currently running cmdlet.</param>
         /// <param name="templateDefinition">The template source to use.</param>
-        /// <returns></returns>
-        internal static TemplateGroupInfo CreateFromTemplateDefinition(Cmdlet context,
-                                                                          string templateDefinition)
+        /// <returns>The defined template.</returns>
+        internal static TemplateGroupInfo CreateFromTemplateDefinition(
+            Cmdlet context,
+            string templateDefinition)
         {
             var group = new TemplateGroupString(string.Empty);
             Bind(group, context);
@@ -52,19 +58,44 @@ namespace PSStringTemplate
             return new TemplateGroupInfo(group);
         }
 
-        internal static TemplateGroupInfo CreateFromGroupDefinition(Cmdlet context,
-                                                                       string groupDefinition)
+        /// <summary>
+        /// Create a template group from a string group definition.
+        /// </summary>
+        /// <param name="context">The <see cref="Cmdlet"/> context to throw from.</param>
+        /// <param name="groupDefinition">The string group definition.</param>
+        /// <returns>The compiled template group.</returns>
+        internal static TemplateGroupInfo CreateFromGroupDefinition(
+            Cmdlet context,
+            string groupDefinition)
         {
             var group = new TemplateGroupString(groupDefinition);
             Bind(group, context);
             return new TemplateGroupInfo(group);
         }
 
+        /// <summary>
+        /// Attaches a template group to a running <see cref="Cmdlet"/>.
+        /// </summary>
+        /// <param name="context">The <see cref="Cmdlet"/> instance to attach to.</param>
         internal void Bind(Cmdlet context)
         {
             Bind(Instance, context);
         }
-        private static void Bind (TemplateGroup group, Cmdlet context)
+
+        /// <summary>
+        /// Removes the attached <see cref="Cmdlet"/> from a template group.
+        /// </summary>
+        internal void Unbind()
+        {
+            Unbind(Instance);
+        }
+
+        /// <summary>
+        /// Attaches a template group to a running <see cref="Cmdlet"/>.
+        /// </summary>
+        /// <param name="group">The <see cref="TemplateGroup"/> to attach.</param>
+        /// <param name="context">The <see cref="Cmdlet"/> instance to attach to.</param>
+        private static void Bind(TemplateGroup group, Cmdlet context)
         {
             group.Listener = new ErrorListener(context);
             group.RegisterModelAdaptor(typeof(PSObject), new PSObjectAdaptor());
@@ -73,10 +104,6 @@ namespace PSStringTemplate
             group.RegisterRenderer(typeof(DateTimeOffset), new DateRenderer());
         }
 
-        internal void Unbind()
-        {
-            Unbind(Instance);
-        }
         private static void Unbind(TemplateGroup group)
         {
             group.Listener = ErrorManager.DefaultErrorListener;
