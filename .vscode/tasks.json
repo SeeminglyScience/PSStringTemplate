@@ -10,7 +10,7 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "0.1.0",
-    "_runner": "terminal",
+    "runner": "terminal",
 
     // Start PowerShell
     "windows": {
@@ -49,24 +49,7 @@
             "isBuildCommand": true,
             "showOutput": "always",
             "args": [
-                "Invoke-Build -Task Build"
-            ]
-        },
-        {
-            "taskName": "BuildDebug",
-            "suppressTaskName": true,
-            "isBuildCommand": true,
-            "showOutput": "always",
-            "args": [
-                "Invoke-Build -Task BuildDebug"
-            ]
-        },
-        {
-            "taskName": "Install",
-            "suppressTaskName": true,
-            "showOutput": "always",
-            "args": [
-                "Invoke-Build -Task Install -Configuration Release"
+                "Invoke-Build"
             ]
         },
         {
@@ -79,12 +62,22 @@
             ]
         },
         {
-            "taskName": "Publish",
+            "taskName": "Test With Coverage",
+            "suppressTaskName": true,
+            "isTestCommand": true,
+            "showOutput": "always",
+            "args": [
+                "Invoke-Build -Task Test -GenerateCodeCoverage"
+            ]
+        },
+        {
+            "taskName": "Install",
             "suppressTaskName": true,
             "showOutput": "always",
             "args": [
-                "Invoke-Build -Task Publish -Configuration Release"
+                "Invoke-Build -Task Install -Configuration Release"
             ]
         }
     ]
 }
+
